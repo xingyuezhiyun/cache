@@ -12,7 +12,6 @@ public class LocalService<T> extends AbstractCacheService<T> {
     /**
      * 获取到应用的信息,创建redis对象并提供服务
      */
-
     private String prefix;
 
     /**
