@@ -8,6 +8,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Optional;
 
+/**
+ * 暂时没有使用
+ */
 public class HessianSerializer implements Serializer {
 
     @Override

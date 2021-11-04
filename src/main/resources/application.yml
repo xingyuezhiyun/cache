@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: cache
+  redis:
+    lettuce:
+      pool:
+        max-idle: 8
+        min-idle: 0
+        max-active: 8
+        max-wait: -1
+      shutdown-timeout: 100
+    database: 0
+    host: 127.0.0.1
+    port: 6379
+    username:
+    password: zxy@666
+    client-type: lettuce # 客户端类型
+#    cluster:
+#      nodes: 127.0.0.1:6379
+#      max-redirects: 3
+

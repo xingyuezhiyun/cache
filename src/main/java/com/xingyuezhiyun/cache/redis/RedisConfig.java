@@ -10,6 +10,8 @@ import com.xingyuezhiyun.cache.common.Serializer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -20,23 +22,19 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 public class RedisConfig<T> {
 
     @Bean
-    @ConditionalOnMissingBean(name = "redisTemplate")
-    public RedisTemplate<String, T> redisTemplate(LettuceConnectionFactory lettuceConnectionFactory) {
+    @Primary
+    public RedisTemplate<String, T> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<String, T> template = new RedisTemplate<>();
-        template.setConnectionFactory(lettuceConnectionFactory);
+        template.setConnectionFactory(redisConnectionFactory);
         ObjectMapper mapper = new ObjectMapper();
         mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
         mapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
         Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<>(Object.class);
         jackson2JsonRedisSerializer.setObjectMapper(mapper);
         StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
-        // key采用String的序列化方式
         template.setKeySerializer(stringRedisSerializer);
-        // hash的key采用String的序列化方式
         template.setHashKeySerializer(stringRedisSerializer);
-        // value序列化方式采用jackson
         template.setValueSerializer(jackson2JsonRedisSerializer);
-        // hash的value序列化方式采用jackson
         template.setHashValueSerializer(jackson2JsonRedisSerializer);
         template.afterPropertiesSet();
         return template;
@@ -44,9 +42,9 @@ public class RedisConfig<T> {
 
     @Bean
     @ConditionalOnMissingBean(StringRedisTemplate.class)
-    public StringRedisTemplate stringRedisTemplate(LettuceConnectionFactory lettuceConnectionFactory) {
+    public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
         StringRedisTemplate stringRedisTemplate = new StringRedisTemplate();
-        stringRedisTemplate.setConnectionFactory(lettuceConnectionFactory);
+        stringRedisTemplate.setConnectionFactory(redisConnectionFactory);
         return stringRedisTemplate;
     }
 
@@ -56,9 +54,8 @@ public class RedisConfig<T> {
     }
 
     @Bean
-    public RedisService<T> getRedisService(Serializer serializer, RedisTemplate<String, T> redisTemplate, StringRedisTemplate stringRedisTemplate) {
+    public RedisService<T> getRedisService(RedisTemplate<String, T> redisTemplate, StringRedisTemplate stringRedisTemplate) {
         RedisService<T> redisService = new RedisService<>();
-        redisService.setSerializer(serializer);
         redisService.setRedisTemplate(redisTemplate);
         redisService.setStringRedisTemplate(stringRedisTemplate);
         return redisService;
