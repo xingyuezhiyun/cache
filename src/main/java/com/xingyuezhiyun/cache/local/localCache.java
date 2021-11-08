@@ -1,8 +1,11 @@
 package com.xingyuezhiyun.cache.local;
 
 import com.xingyuezhiyun.cache.cache.Cache;
+import org.springframework.cache.caffeine.CaffeineCache;
 
-public class localCache<T> implements Cache<T> {
+public class LocalCache<T> implements Cache<T> {
+
+    CaffeineCache caffeineCache;
 
     @Override
     public String getString(String key) {

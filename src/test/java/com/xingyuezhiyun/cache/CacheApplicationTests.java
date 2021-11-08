@@ -1,6 +1,7 @@
 package com.xingyuezhiyun.cache;
 
 import com.xingyuezhiyun.cache.cache.Cache;
+import com.xingyuezhiyun.cache.redis.RedisCache;
 import com.xingyuezhiyun.cache.redis.RedisService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,6 +30,7 @@ class CacheApplicationTests {
         cache.set("person0001", person);
         Person person001 = cache.get("person0001");
         System.out.println(person001.getName());
+
     }
 
     public static class Person {
